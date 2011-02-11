@@ -9,11 +9,9 @@ Put this in your <del>pipe</del> cinnamon
 
 And <del>smoke it</del> put it in an apple pie or something
 
-Options +FollowSymlinks
-
-RewriteEngine On
-
-RewriteRule ^(.*)$ frucnatra.php/$1 [NC]
+    Options +FollowSymlinks
+    RewriteEngine On
+    RewriteRule ^(.*)$ frucnatra.php/$1 [NC]
 
 ## What's supported
 
