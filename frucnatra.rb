@@ -17,8 +17,11 @@ def route(method, path, &block)
 end
 
 def frucnatra_shutdown
-  puts "Frucnatra doesn't know this ditty."
+  # phpcall :print_r, server
+  route = server[:PATH_INFO].nil? ? '/' : server[:PATH_INFO].escape
+  puts "<p>Frucnatra doesn't know this ditty.<p>Route: #{route}"
   # block.call
 end
 
+# The nil is required since every Fructose function takes a block as its first param
 phpcall :register_shutdown_function, 'F_frucnatra_shutdown', nil
