@@ -17,33 +17,32 @@ def route(method, path, &block)
 end
 
 def frucnatra_shutdown
-  route = server[:PATH_INFO].nil? ? '/' : server[:PATH_INFO].escape
+  path_info = server[:PATH_INFO].nil? ? '/' : server[:PATH_INFO].escape
   method = server[:REQUEST_METHOD].escape
   
-  if $routes.has_key? route and $routes[route].has_key? method
-    $routes[route][method].call
+  if $routes.has_key? path_info and $routes[path_info].has_key? method
+    $routes[path_info][method].call
   else
-    puts "<!DOCTYPE html>
-<html>
-<head>
-  <style type=\"text/css\">
-  body { text-align:center;font-family:helvetica,arial;font-size:22px;
-    color:#888;margin:20px}
-  #c {margin:0 auto;width:500px;text-align:left}
-  </style>
-</head>
-<body>
-  <h2>Frucnatra doesn't know this ditty.</h2>
-  <img src='/__sinatra__/404.png'>
-  <div id=\"c\">
-    Try this:
-    <pre>get '#{route}' do
-  \"Hello World\"
-end</pre>
-
-  </div>
-</body>
-</html>"
+    puts (<<-HTML)
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style type="text/css">
+      body { text-align:center;font-family:helvetica,arial;font-size:22px;
+        color:#888;margin:20px}
+      #c {margin:0 auto;width:500px;text-align:left}
+      </style>
+    </head>
+    <body>
+      <h2>Frucnatra doesn't know this ditty.</h2>
+      <img src='/__sinatra__/404.png'>
+      <div id="c">
+        Try this:
+        <pre>#{method.downcase} '#{path_info}' do\n  "Hello World"\nend</pre>
+      </div>
+    </body>
+    </html>
+    HTML
   end
 end
 
