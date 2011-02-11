@@ -17,10 +17,34 @@ def route(method, path, &block)
 end
 
 def frucnatra_shutdown
-  # phpcall :print_r, server
   route = server[:PATH_INFO].nil? ? '/' : server[:PATH_INFO].escape
-  puts "<p>Frucnatra doesn't know this ditty.<p>Route: #{route}"
-  # block.call
+  
+  if $routes.has_key? route
+    puts 'wat'
+    # block.call
+  else
+    puts "<!DOCTYPE html>
+<html>
+<head>
+  <style type=\"text/css\">
+  body { text-align:center;font-family:helvetica,arial;font-size:22px;
+    color:#888;margin:20px}
+  #c {margin:0 auto;width:500px;text-align:left}
+  </style>
+</head>
+<body>
+  <h2>Frucnatra doesn't know this ditty.</h2>
+  <img src='/__sinatra__/404.png'>
+  <div id=\"c\">
+    Try this:
+    <pre>get '#{route}' do
+  \"Hello World\"
+end</pre>
+
+  </div>
+</body>
+</html>"
+  end
 end
 
 # The nil is required since every Fructose function takes a block as its first param
