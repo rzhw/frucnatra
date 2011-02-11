@@ -18,10 +18,10 @@ end
 
 def frucnatra_shutdown
   route = server[:PATH_INFO].nil? ? '/' : server[:PATH_INFO].escape
+  method = server[:REQUEST_METHOD].escape
   
-  if $routes.has_key? route and $routes[route].has_key? server[:REQUEST_METHOD]
-    #puts 'wat'
-    $routes[route][:REQUEST_METHOD].call
+  if $routes.has_key? route and $routes[route].has_key? method
+    $routes[route][method].call
   else
     puts "<!DOCTYPE html>
 <html>
@@ -47,5 +47,4 @@ end</pre>
   end
 end
 
-# The nil is required since every Fructose function takes a block as its first param
 phpcall :register_shutdown_function, 'F_frucnatra_shutdown', nil
