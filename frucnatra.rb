@@ -51,9 +51,7 @@ def frucnatra_shutdown
 end
 
 phpcall :register_shutdown_function, 'F_frucnatra_shutdown', nil
-
 get '/' do
-  #phpcall :print_r, $server
   "<h1>Test</h1>
   <p>This is the homepage!</p>
   <ul>
