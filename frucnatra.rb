@@ -4,13 +4,16 @@ require :phpcall
 $routes = {}
 
 def get(path, &block)
-  $routes[path] = {} if $routes[path].nil?
-  $routes[path][:get] = block
+  route :get, path, &block
 end
 
 def post(path, &block)
+  route :post, path, &block
+end
+
+def route(method, path, &block)
   $routes[path] = {} if $routes[path].nil?
-  $routes[path][:post] = block
+  $routes[path][method] = block
 end
 
 def frucnatra_shutdown
