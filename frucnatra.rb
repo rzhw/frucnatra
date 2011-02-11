@@ -4,11 +4,11 @@ require :phpcall
 $routes = {}
 
 def get(path, &block)
-  route :get, path, &block
+  route 'GET', path, &block
 end
 
 def post(path, &block)
-  route :post, path, &block
+  route 'POST', path, &block
 end
 
 def route(method, path, &block)
@@ -19,9 +19,9 @@ end
 def frucnatra_shutdown
   route = server[:PATH_INFO].nil? ? '/' : server[:PATH_INFO].escape
   
-  if $routes.has_key? route
-    puts 'wat'
-    # block.call
+  if $routes.has_key? route and $routes[route].has_key? server[:REQUEST_METHOD]
+    #puts 'wat'
+    $routes[route][:REQUEST_METHOD].call
   else
     puts "<!DOCTYPE html>
 <html>
