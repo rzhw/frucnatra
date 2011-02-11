@@ -12,7 +12,7 @@ def post(path, &block)
 end
 
 def route(method, path, &block)
-  $routes[path] = {} if $routes[path].nil?
+  $routes[path] ||= {}
   $routes[path][method] = block
 end
 
