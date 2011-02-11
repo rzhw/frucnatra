@@ -3,6 +3,9 @@ require :phpcall
 
 $routes = {}
 
+# In Sinatra this may be :root in the Base class, not sure
+$root = $server[:REQUEST_URI][0, $server[:REQUEST_URI].length - ($server[:PATH_INFO].nil? ? 0 : $server[:PATH_INFO].length)]
+
 def get(path, &block)
   route 'GET', path, &block
 end
@@ -50,16 +53,18 @@ end
 phpcall :register_shutdown_function, 'F_frucnatra_shutdown', nil
 
 get '/' do
+  #phpcall :print_r, $server
   "<h1>Test</h1>
   <p>This is the homepage!</p>
   <ul>
-    <li><a href='./index.php/test'>Test page</a></li>
-    <li><a href='./index.php/lskdjfklsjdf'>Non-existent page</a></li>
+    <li><a href='#{$root}/test'>Test page</a></li>
+    <li><a href='#{$root}/lskdjfklsjdf'>Non-existent page</a></li>
   </ul>"
 end
 
 get '/test' do
   "<h1>Test</h1>
   <p>This is a test page!</p>
-  <p><a href='./index.php'>Go home</a></p>"
+  <p>$root is screwed up here :(</p>
+  <p><a href='#{$root}'>Go home</a></p>"
 end
