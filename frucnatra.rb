@@ -13,12 +13,12 @@ end
 
 def route(method, path, &block)
   $routes[path] ||= {}
-  $routes[path][method] = block
+  $routes[path][method] = Proc.new &block # Temporary Fructose-related workaround
 end
 
 def frucnatra_shutdown
-  path_info = server[:PATH_INFO] || '/'
-  method = server[:REQUEST_METHOD]
+  path_info = $server[:PATH_INFO] || '/'
+  method = $server[:REQUEST_METHOD]
   
   if $routes.has_key? path_info and $routes[path_info].has_key? method
     puts $routes[path_info][method].call
@@ -50,5 +50,16 @@ end
 phpcall :register_shutdown_function, 'F_frucnatra_shutdown', nil
 
 get '/' do
-  "Hello world!"
+  "<h1>Test</h1>
+  <p>This is the homepage!</p>
+  <ul>
+    <li><a href='./index.php/test'>Test page</a></li>
+    <li><a href='./index.php/lskdjfklsjdf'>Non-existent page</a></li>
+  </ul>"
+end
+
+get '/test' do
+  "<h1>Test</h1>
+  <p>This is a test page!</p>
+  <p><a href='./index.php'>Go home</a></p>"
 end
