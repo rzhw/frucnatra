@@ -23,6 +23,7 @@ def frucnatra_shutdown
   if $routes.has_key? path_info and $routes[path_info].has_key? method
     $routes[path_info][method].call
   else
+    # This is meant to be (<<-HTML).gsub(/^ {4}/, ''), but Fructose doesn't support regex yet
     puts (<<-HTML)
     <!DOCTYPE html>
     <html>
