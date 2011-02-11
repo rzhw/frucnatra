@@ -17,11 +17,11 @@ def route(method, path, &block)
 end
 
 def frucnatra_shutdown
-  path_info = server[:PATH_INFO].nil? ? '/' : server[:PATH_INFO].escape
-  method = server[:REQUEST_METHOD].escape
+  path_info = server[:PATH_INFO] || '/'
+  method = server[:REQUEST_METHOD]
   
   if $routes.has_key? path_info and $routes[path_info].has_key? method
-    $routes[path_info][method].call
+    puts $routes[path_info][method].call
   else
     # This is meant to be (<<-HTML).gsub(/^ {6}/, ''), but Fructose doesn't support regex yet
     puts (<<-HTML)
@@ -39,7 +39,7 @@ def frucnatra_shutdown
         <img src='/__sinatra__/404.png'>
         <div id="c">
           Try this:
-          <pre>#{method.downcase} '#{path_info}' do\n  "Hello World"\nend</pre>
+          <pre>#{method.downcase.escape} '#{path_info.escape}' do\n  "Hello World"\nend</pre>
         </div>
       </body>
       </html>
@@ -48,3 +48,7 @@ def frucnatra_shutdown
 end
 
 phpcall :register_shutdown_function, 'F_frucnatra_shutdown', nil
+
+get '/' do
+  "Hello world!"
+end
