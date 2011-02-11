@@ -21,4 +21,4 @@ def frucnatra_shutdown
   # block.call
 end
 
-phpcall :register_shutdown_function, 'F_frucnatra_shutdown'
+phpcall :register_shutdown_function, 'F_frucnatra_shutdown', nil
