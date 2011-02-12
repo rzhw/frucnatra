@@ -1,5 +1,5 @@
-require :http
-require :phpcall
+require 'http'
+require 'phpcall'
 
 #module Frucnatra
   $routes = Hash.new do |h,k|

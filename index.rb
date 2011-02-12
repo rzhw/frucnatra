@@ -1,5 +1,5 @@
-require :http
-require :frucnatra
+require 'http'
+require 'frucnatra'
 
 get '/' do
   "<h1>Test</h1>
