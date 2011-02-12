@@ -52,18 +52,3 @@ def frucnatra_shutdown
 end
 
 phpcall :register_shutdown_function, 'F_frucnatra_shutdown', nil
-get '/' do
-  "<h1>Test</h1>
-  <p>This is the homepage!</p>
-  <ul>
-    <li><a href='#{$root}/test'>Test page</a></li>
-    <li><a href='#{$root}/lskdjfklsjdf'>Non-existent page</a></li>
-  </ul>"
-end
-
-get '/test' do
-  "<h1>Test</h1>
-  <p>This is a test page!</p>
-  <p>$root is screwed up here :(</p>
-  <p><a href='#{$root}'>Go home</a></p>"
-end
