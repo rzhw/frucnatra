@@ -2,8 +2,10 @@ require :http
 require :phpcall
 
 $routes = Hash.new do |h,k|
-  h[k] = {}
+  h[k] = []
 end
+
+#$routes = []
 
 # In Sinatra this may be :root in the Base class, not sure
 $root = $server[:REQUEST_URI][0, $server[:REQUEST_URI].length - ($server[:PATH_INFO].nil? ? 0 : $server[:PATH_INFO].length)]
@@ -16,17 +18,36 @@ def post(path, &block)
   route 'POST', path, &block
 end
 
-def route(method, path, &block)
-  $routes[path][method] = Proc.new &block # Temporary Fructose-related workaround
+def route(verb, path, &block)  
+  pattern = path
+  keys = nil
+  conditions = nil
+  
+  #($routes[verb] ||= []).
+  #  push([pattern, keys, conditions, Proc.new(&block)]).last
+  
+  count = phpcall :count, $routes[verb] # Fructose doesn't seem to support array length yet
+  $routes[verb][count] = [pattern, keys, conditions, Proc.new(&block)] # Using Proc.new as a temp Fructose-related thing
 end
 
 def frucnatra_shutdown
   path_info = $server[:PATH_INFO] || '/'
   method = $server[:REQUEST_METHOD]
   
-  if $routes.has_key? path_info and $routes[path_info].has_key? method
-    puts $routes[path_info][method].call
-  else
+  route_found = false # temp
+  
+  if routes = $routes[method]
+    routes.each do |arr| # Splatting to block params not supported yet
+      pattern, keys, conditions, block = arr
+
+      if pattern == path_info
+        puts block.call
+        route_found = true
+      end
+    end
+  end
+  
+  if !route_found
     # This is meant to be (<<-HTML).gsub(/^ {6}/, ''), but Fructose doesn't support regex yet
     puts (<<-HTML)
       <!DOCTYPE html>
