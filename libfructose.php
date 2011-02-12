@@ -195,7 +195,7 @@ class F_Object
 	}
 	public function __operator_stricteq($block, $operand)
 	{
-		return $this->__operator_eq($operand);
+		return $this->__operator_eq(NULL, $operand);
 	}
 	public function F_clone($block)
 	{
@@ -534,6 +534,181 @@ class F_Random extends F_Object
 	{
 		$m = $max !== NULL ? $max->__NUMBER : 1.0;
 		return F_Number::__from_number((mt_rand() / mt_getrandmax())  * $m);
+	}
+}
+class F_Regexp extends F_Object
+{
+	public static $_matches = array();
+	public static function _get_match($n)
+	{
+		$count = 0;
+		foreach(F_Regexp::$_matches as $k=>$v)
+			if(is_int($k))
+				$count++;
+		if($n < 0)
+			$n += $count;
+		if($n < 0)
+			return new F_NilClass;
+		if($n >= $count)
+			return new F_NilClass;
+		
+		$val = F_Regexp::$_matches[$n];
+		if(is_array($val))
+			$val = $val[0];
+		return F_String::__from_string($val);
+	}
+	
+	public static function __from_string($str)
+	{
+		$r = new F_Regexp;
+		$r->__REGEXP = $str;
+		return $r;
+	}
+	public static function SF_new($block, $regexp, $options = NULL)
+	{
+		$opts = "";
+		if($options !== NULL)
+			$opts = $options->F_to_s(NULL)->__STRING;
+		$r = new F_Regexp;
+		$r->__REGEXP = '/' . str_replace('/', '\/', $regexp->F_to_s(NULL)->__STRING) . '/' . $opts;
+		return $r;
+	}
+	public function __operator_eq($block, $operand)
+	{
+		return F_TrueClass::__from_bool(is_a($operand, 'F_Regexp') && $this->__REGEXP === $operand->__REGEXP);
+	}
+	public function __operator_stricteq($block, $operand)
+	{
+		return $this->__operator_match(NULL, $operand);
+	}
+	public function __operator_match($block, $operand)
+	{
+		if(preg_match($this->__REGEXP, $operand->F_to_s(NULL)->__STRING, F_Regexp::$_matches, PREG_OFFSET_CAPTURE) === 0)
+			return new F_NilClass;
+			
+		return F_Number::__from_number(F_Regexp::$_matches[0][1]);
+	}
+	public function F_casefold_QUES_($block)
+	{
+		return F_TrueClass::__from_bool(preg_match('/\/[a-z]*i[a-z]*$/', $this->__REGEXP, F_Regexp::$_matches));
+	}
+	public function F_to_s($block)
+	{
+		return F_String::__from_string($this->__REGEXP);
+	}
+	public function F_source($block)
+	{
+		preg_match('/^\/(.*)\/[a-z]*$/', $this->__REGEXP, F_Regexp::$_matches);
+		return F_String::__from_string(F_Regexp::$_matches[0]);
+	}
+	public function F_match($block, $str)
+	{
+		if(preg_match($this->__REGEXP, $str->F_to_s(NULL)->__STRING, F_Regexp::$_matches, PREG_OFFSET_CAPTURE) === 0)
+			return new F_NilClass;
+		return F_MatchData::__from_array(F_Regexp::$_matches, $this);
+	}
+}
+class F_MatchData extends F_Object
+{
+	public static function __from_array($matches, $regexp)
+	{
+		$md = new F_MatchData;
+		$md->__MATCHES = $matches;
+		$md->__REGEXP = $regexp;
+		return $md;
+	}
+	public function __operator_arrayget($block, $idx)
+	{
+		$count = 0;
+		foreach($this->__MATCHES as $k=>$v)
+			if(is_int($k))
+				$count++;
+				
+		if(is_a($idx, 'F_Number'))
+		{
+			$index = $idx->__NUMBER;
+			if($index < 0)
+				$index += $count;
+			if($index < 0)
+				return new F_NilClass;
+			if($index >= $count)
+				return new F_NilClass;
+			return F_String::__from_string($this->__MATCHES[$index][0]);
+		}
+		$index = $idx->F_to_s(NULL)->__STRING;
+		if(!isset($this->__MATCHES[$index]))
+			return new F_NilClass;
+		return F_String::__from_string($this->__MATCHES[$index][0]);
+	}
+	public function F_begin($block, $idx)
+	{
+		$count = 0;
+		foreach($this->__MATCHES as $k=>$v)
+			if(is_int($k))
+				$count++;
+		if(is_a($idx, 'F_Number'))
+		{
+			$index = $idx->__NUMBER;
+			if($index < 0)
+				$index += $count;
+			if($index < 0)
+				return new F_NilClass;
+			if($index >= $count)
+				return new F_NilClass;
+			return F_Number::__from_number($this->__MATCHES[$index][1]);
+		}
+		$index = $idx->F_to_s(NULL)->__STRING;
+		if(!isset($this->__MATCHES[$index]))
+			return new F_NilClass;
+		return F_Number::__from_number($this->__MATCHES[$index][1]);
+	}
+	public function F_captures($block)
+	{
+		$caps = array_map(create_function('$a','return F_String::__from_string($a[0]);'), $this->__MATCHES);
+		array_shift($caps);
+		return F_Array::__from_array($caps);
+	}
+	public function F_end($block, $idx)
+	{
+		$count = 0;
+		foreach($this->__MATCHES as $k=>$v)
+			if(is_int($k))
+				$count++;
+		if(is_a($idx, 'F_Number'))
+		{
+			$index = $idx->__NUMBER;
+			if($index < 0)
+				$index += $count;
+			if($index < 0)
+				return new F_NilClass;
+			if($index >= $count)
+				return new F_NilClass;
+			return F_Number::__from_number($this->__MATCHES[$index][1] + strlen($this->__MATCHES[$index][0]));
+		}
+		$index = $idx->F_to_s(NULL)->__STRING;
+		if(!isset($this->__MATCHES[$index]))
+			return new F_NilClass;
+		return F_Number::__from_number($this->__MATCHES[$index][1] + strlen($this->__MATCHES[$index][0]));
+	}
+	public function F_size($block)
+	{
+		$count = 0;
+		foreach($this->__MATCHES as $k=>$v)
+			if(is_int($k))
+				$count++;
+		return F_Number::__from_number($count);
+	}
+	public function F_regexp($block)
+	{
+		return $this->__REGEXP;
+	}
+	public function F_to_a($block)
+	{
+		return $this->F_captures(NULL);
+	}
+	public function F_to_s($block)
+	{
+		return F_String::__from_string($this->__MATCHES[0][0]);
 	}
 }
 class F_Enumerable extends F_Object
@@ -918,6 +1093,14 @@ class F_Array extends F_Enumerable
 		$this->__ARRAY = array();
 		return $this;
 	}
+	public function F_join($block, $sep = NULL)
+	{
+		$seper = "";
+		if($sep !== NULL)
+			$seper = $sep->F_to_s(NULL)->__STRING;
+			
+		return F_String::__from_string(implode($seper, array_map(create_function('$el','return $el->F_to_s(NULL)->__STRING;'), $this->__ARRAY)));
+	}
 	public function F_compact($block)
 	{
 		$new = array();
@@ -1095,16 +1278,16 @@ class F_Range extends F_Enumerable
 	}
 	public function __operator_eq($block, $operand)
 	{
-		return F_TrueClass::__from_bool(_isTruthy($this->__BEGIN->__operator_eq($operand->__BEGIN))
-										&& _isTruthy($this->__END->__operator_eq($operand->__END))
+		return F_TrueClass::__from_bool(_isTruthy($this->__BEGIN->__operator_eq(NULL, $operand->__BEGIN))
+										&& _isTruthy($this->__END->__operator_eq(NULL, $operand->__END))
 										&& $this->__EXCLUSIVE === $operand->__EXCLUSIVE);
 	}
 	public function __operator_stricteq($block, $operand)
 	{
-		if(_isTruthy($operand->F_respond_to_QUES_(F_Symbol::__from_string("<=>"))))
+		if(_isTruthy($operand->F_respond_to_QUES_(NULL, F_Symbol::__from_string("<=>"))))
 		{
-			if($operand->__operator_spaceship($this->__BEGIN)->__NUMBER >= 0
-				&& $operand->__operator_spaceship($this->__END)->__NUMBER <= 0)
+			if($operand->__operator_spaceship(NULL, $this->__BEGIN)->__NUMBER >= 0
+				&& $operand->__operator_spaceship(NULL, $this->__END)->__NUMBER <= 0)
 			{
 				return new F_TrueClass;
 			}
@@ -1116,7 +1299,7 @@ class F_Range extends F_Enumerable
 		// we're going to have to enumerate the range to see if $operand included
 		$this->enumerate_range();
 		foreach($this->__RANGE as $i)
-			if(_isTruthy($i->__operator_eq($operand)))
+			if(_isTruthy($i->__operator_eq(NULL, $operand)))
 				return new F_TrueClass;
 		return new F_FalseClass;
 	}
@@ -1814,18 +1997,9 @@ class F_String extends F_Object
 	}
 	public function __operator_match($block,$operand)
 	{
-		if(get_class($operand) === 'F_Regexp' || is_subclass_of($operand, 'F_Regexp'))
-		{
-			$matches = array();
-			if(!preg_match($operand->__REGEX, $this->__STRING))
-				return new F_NilClass;
-			
-			return F_Number::__from_number(strpos($this->__STRING, $matches[0]));
-		}
-		
-		return $operand->__operator_match($this);
+		return $operand->__operator_match(NULL, $this);
 	}
-	public function __operator_arrayget($block,$operand, $operand2 = NULL)
+	public function __operator_arrayget($block, $operand, $operand2 = NULL)
 	{
 		if(get_class($operand) === 'F_Number' || is_subclass_of($operand, 'F_Number'))
 		{
@@ -1850,16 +2024,12 @@ class F_String extends F_Object
 			else
 				return new F_NilClass;
 		}
-		else if(get_class($operand) === 'F_Regexp' || is_subclass_of($operand, 'F_Regexp'))
+		else if(get_class($operand) === 'F_Range' || is_subclass_of($operand, 'F_Range'))
 		{
-			$matches = array();
-			if(!preg_match($operand->__REGEX, $this->__STRING))
-				return new F_NilClass;
-			$index = $operand2 !== NULL ? (int)$operand2->__NUMBER : 0;
-			if(count($matches) > $index)
-				return new F_NilClass;
-			
-			return F_String::__from_string($matches[$index]);
+			if(is_a($operand->__BEGIN, 'F_Number'))
+			{
+				return $this->__operator_arrayget(NULL, $operand->__BEGIN, $operand->__END);
+			}
 		}
 		else if(get_class($operand) === 'F_String' || is_subclass_of($operand, 'F_String'))
 		{
@@ -1934,6 +2104,50 @@ class F_String extends F_Object
 	public function F_eql_QUES_($block,$operand)
 	{
 		return F_TrueClass::__from_bool($this->__STRING === $operand->F_to_s(NULL)->__STRING);
+	}
+	public function F_gsub($block, $pattern, $replacement = NULL)
+	{
+		if($replacement !== NULL)
+		{
+			$str = preg_replace($pattern->__REGEXP, $replacement->F_to_s(NULL)->__STRING, $this->__STRING);
+			return F_String::__from_string($str);
+		}
+		else
+		{
+			$str = preg_replace_callback($pattern->__REGEXP, 
+				create_function('$matches', sprintf('$f = "%s"; return $f(NULL, F_String::__from_string($matches[0]))->F_to_s(NULL)->__STRING;', $block))
+				, $this->__STRING);
+			return F_String::__from_string($str);
+		}
+	}
+	public function F_gsub_EXCL_($block, $pattern, $replacement = NULL)
+	{
+		$new = $this->F_gsub($block, $pattern, $replacement);
+		if($this->__STRING === $new->__STRING)
+			return new F_NilClass;
+		$this->__STRING = $new->__STRING;
+	}
+	public function F_sub($block, $pattern, $replacement = NULL)
+	{
+		if($replacement !== NULL)
+		{
+			$str = preg_replace($pattern->__REGEXP, $replacement->F_to_s(NULL)->__STRING, $this->__STRING, 1);
+			return F_String::__from_string($str);
+		}
+		else
+		{
+			$str = preg_replace_callback($pattern->__REGEXP, 
+				create_function('$matches', sprintf('$f = "%s"; return $f(NULL, F_String::__from_string($matches[0]))->F_to_s(NULL)->__STRING;', $block))
+				, $this->__STRING, 1);
+			return F_String::__from_string($str);
+		}
+	}
+	public function F_sub_EXCL_($block, $pattern, $replacement = NULL)
+	{
+		$new = $this->F_sub($block, $pattern, $replacement);
+		if($this->__STRING === $new->__STRING)
+			return new F_NilClass;
+		$this->__STRING = $new->__STRING;
 	}
 	public function F_hash($block)
 	{

@@ -1,2 +1,2 @@
-fructose frucnatra.rb
-fructose index.rb
+compiler\fructose frucnatra.rb
+compiler\fructose index.rb
