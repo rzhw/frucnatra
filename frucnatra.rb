@@ -1,7 +1,9 @@
 require :http
 require :phpcall
 
-$routes = {}
+$routes = Hash.new do |h,k|
+  h[k] = {}
+end
 
 # In Sinatra this may be :root in the Base class, not sure
 $root = $server[:REQUEST_URI][0, $server[:REQUEST_URI].length - ($server[:PATH_INFO].nil? ? 0 : $server[:PATH_INFO].length)]
@@ -15,7 +17,6 @@ def post(path, &block)
 end
 
 def route(method, path, &block)
-  $routes[path] ||= {}
   $routes[path][method] = Proc.new &block # Temporary Fructose-related workaround
 end
 
