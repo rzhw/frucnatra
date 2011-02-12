@@ -13,6 +13,5 @@ end
 get '/test' do
   "<h1>Test</h1>
   <p>This is a test page!</p>
-  <p>$root is screwed up here :(</p>
   <p><a href='#{$root}'>Go home</a></p>"
 end
