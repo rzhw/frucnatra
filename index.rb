@@ -15,3 +15,7 @@ get '/test' do
   <p>This is a test page!</p>
   <p><a href='#{$root}'>Go home</a></p>"
 end
+
+get '/name/:name' do
+  "You said your name was #{params[:name]}"
+end

@@ -22,17 +22,67 @@ require 'phpcall'
   def options(path, &bk) route 'OPTIONS', path, opts, &bk end
 
   def route(verb, path, &block)  
-    pattern = path
-    keys = nil
-    conditions = nil
+    #pattern = path
+    #keys = nil
+    #conditions = nil
+    
+    options = {}
+    dummy_block, pattern, keys, conditions = compile! verb, path, nil, options
     
     #($routes[verb] ||= []).
-    #  push([pattern, keys, conditions, Proc.new(&block)]).last
+    #  push([pattern, keys, conditions, block]).last
     
     count = phpcall :count, $routes[verb] # Fructose doesn't seem to support array length yet
     $routes[verb][count] = [pattern, keys, conditions, Proc.new(&block)] # Using Proc.new as a temp Fructose-related thing
   end
+  
+  def compile!(verb, path, block, options) # options={}
+    #options.each_pair { |option, args| send(option, *args) }
+    #method_name = "#{verb} #{path}"
 
+    #define_method(method_name, &block)
+    #unbound_method          = instance_method method_name
+    pattern, keys           = compile(path)
+    #conditions, @conditions = @conditions, []
+    conditions = []
+    #remove_method method_name
+
+    #[ block.arity != 0 ?
+    #    proc { unbound_method.bind(self).call(*@block_params) } :
+    #    proc { unbound_method.bind(self).call },
+    #  pattern, keys, conditions ]
+    
+    [ block,
+      pattern, keys, conditions ]
+  end
+
+  def compile(path)
+    keys = []
+    if path.respond_to? :to_s
+      special_chars = %w{. + ( ) $}
+      pattern =
+        path.to_s.gsub(/((:\w+)|[\*#{special_chars.join}])/) do |match|
+          case match
+          when "*"
+            keys << 'splat'
+            "(.*?)"
+          #when *special_chars
+          #  Regexp.escape(match)
+          else
+            keys << $2[1..-1]
+            "([^/?#]+)"
+          end
+        end
+      [/^#{pattern}$/, keys]
+    elsif path.respond_to?(:keys) && path.respond_to?(:match)
+      [path, path.keys]
+    elsif path.respond_to? :match
+      [path, keys]
+    else
+      #raise TypeError, path
+    end
+  end
+  
   def frucnatra_shutdown
     path_info = $server[:PATH_INFO] || '/'
     method = $server[:REQUEST_METHOD]
@@ -41,15 +91,14 @@ require 'phpcall'
       routes.each do |arr| # Splatting to block params not supported yet
         pattern, keys, conditions, block = arr
 
-        if pattern == path_info
+        if match = pattern.match(path_info) #pattern == path_info
           puts block.call
           return
         end
       end
     end
     
-    # This is meant to be (<<-HTML).gsub(/^ {6}/, ''), but Fructose doesn't support regex yet
-    puts (<<-HTML)
+    puts (<<-HTML).gsub(/^ {6}/, '')
       <!DOCTYPE html>
       <html>
       <head>
