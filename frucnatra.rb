@@ -94,12 +94,12 @@ require 'phpcall'
           values = match.captures.to_a
           params =
             if keys.any?
-              keys.zip(values).inject({}) do |hash,a| # |hash,(k,v)|
+              keys.zip(values).reduce({}) do |hash,a| #keys.zip(values).inject({}) do |hash,(k,v)|
                 k,v = a
                 if k == 'splat'
-                  (hash[k] ||= []) << v
+                  (hash[k.to_sym] ||= []) << v
                 else
-                  hash[k] = v
+                  hash[k.to_sym] = v
                 end
                 hash
               end
