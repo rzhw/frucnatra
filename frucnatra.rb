@@ -32,8 +32,7 @@ require 'phpcall'
     #($routes[verb] ||= []).
     #  push([pattern, keys, conditions, block]).last
     
-    count = phpcall :count, $routes[verb] # Fructose doesn't seem to support array length yet
-    $routes[verb][count] = [pattern, keys, conditions, Proc.new(&block)] # Using Proc.new as a temp Fructose-related thing
+    $routes[verb][$routes[verb].count] = [pattern, keys, conditions, Proc.new(&block)] # Using Proc.new as a temp Fructose-related thing
   end
   
   def compile!(verb, path, block, options) # options={}
