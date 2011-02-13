@@ -180,9 +180,17 @@ class F_Object
 		debug_print_backtrace();
 		die;
 	}
+	public function F_define_method($block, $sym)
+	{
+		$this->_dyn_methods[_rmethod_to_php($sym->F_to_s(NULL)->__STRING)] = $block;
+	}
 	public function __add_method($name, $fn)
 	{
 		$this->_dyn_methods[$name] = $fn;
+	}
+	public function F_define_global_method($block, $sym)
+	{
+		F_Object::$_dyn_global_methods[_rmethod_to_php($sym->F_to_s(NULL)->__STRING)] = $block;
 	}
 	public static function __add_global_method($name, $fn)
 	{
@@ -1537,7 +1545,7 @@ class F_Hash extends F_Enumerable
 			if(!$first)
 				$str .= ", ";
 			$first = FALSE;
-			$str .= $pairs->__ARRAY[0]->F_to_s(NULL) . " => " . $pairs->__ARRAY[1]->F_to_s(NULL);
+			$str .= $pairs->__ARRAY[0]->F_to_s(NULL)->__STRING . " => " . $pairs->__ARRAY[1]->F_to_s(NULL)->__STRING;
 		}
 		$str .= " }";
 		return F_String::__from_string($str);
