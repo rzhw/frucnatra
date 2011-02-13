@@ -66,8 +66,8 @@ require 'phpcall'
           when "*"
             keys << 'splat'
             "(.*?)"
-          #when *special_chars
-          #  Regexp.escape(match)
+          when special_chars #when *special_chars
+            Regexp.escape(match)
           else
             keys << $2[1..-1]
             "([^/?#]+)"
