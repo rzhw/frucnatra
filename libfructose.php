@@ -118,7 +118,7 @@ class F_Object
 	
 	public function F_to_s($block)
 	{
-		return F_String::__from_string("Object");
+		return $this->F_class(NULL)->F_to_s(NULL);
 	}
 	public function F_puts($block,$o)
 	{
@@ -866,6 +866,9 @@ class F_Enumerable extends F_Object
 			// @TODO
 			// throw some exception
 		}
+		if($sym !== NULL)
+			F_Enumerable::$_states[$state] = $sym;
+			
 		$this->F_each(create_function('',sprintf('$a = func_get_args(); $state = %d; $f = "%s";
 		if(F_Enumerable::$_states[$state] === NULL)
 		{
@@ -988,6 +991,27 @@ class F_Enumerable extends F_Object
 		catch(ReturnFromBlock $rfb)
 		{ }
 		return F_Array::__from_array(F_Enumerable::$_states[$state]);
+	}
+	public function F_zip($block)
+	{
+		$args = func_get_args();
+		array_shift($args);
+		$state = count(F_Enumerable::$_states);
+		F_Enumerable::$_states[$state] = array('idx' => F_Number::__from_number(0), 'arr' => array(), 'collections' => $args);
+		
+		$this->F_each(create_function('$b,$item', sprintf('
+		$state = %d;
+		$arr = array($item);
+		for($i = 0; $i < count(F_Enumerable::$_states[$state]["collections"]); $i++)
+		{
+			$arr[] = F_Enumerable::$_states[$state]["collections"][$i]->__operator_arrayget(NULL, F_Enumerable::$_states[$state]["idx"]);
+		}
+		F_Enumerable::$_states[$state]["idx"] = F_Enumerable::$_states[$state]["idx"]->F_succ(NULL);
+		F_Enumerable::$_states[$state]["arr"][] = F_Array::__from_array($arr);
+		return new F_NilClass;
+		', $state)));
+		
+		return F_Array::__from_array(F_Enumerable::$_states[$state]['arr']);
 	}
 }
 class F_Array extends F_Enumerable
@@ -1205,7 +1229,10 @@ class F_Array extends F_Enumerable
 				return new F_TrueClass;
 		return new F_FalseClass;
 	}
-	
+	public function F_to_s($block)
+	{
+		return F_String::__from_string('[ ' . implode(', ', array_map(create_function('$o','return $o->F_inspect(NULL)->__STRING;'), $this->__ARRAY)) . ' ]');
+	}
 	public function F_index($block, $val)
 	{
 		for($i = 0; $i < count($this->__ARRAY); $i++)
@@ -1400,6 +1427,10 @@ class F_Hash extends F_Enumerable
 			$hash->__PAIRS[] = F_Array::__from_array(array(F_Symbol::__from_string($k), F_String::__from_string($v)));
 			
 		return $hash;
+	}
+	public static function F_insert($block, $arr)
+	{
+		return $this->__operator_arrayset(NULL, $arr->__operator_arrayget(NULL, F_Number::__from_number(0)), $arr->__operator_arrayget(NULL, F_Number::__from_number(1)));
 	}
 	public static function SF_new($block, $obj = NULL)
 	{
@@ -2046,7 +2077,7 @@ class F_String extends F_Object
 		{
 			if(is_a($operand->__BEGIN, 'F_Number'))
 			{
-				return $this->__operator_arrayget(NULL, $operand->__BEGIN, $operand->__END);
+				return $this->__operator_arrayget(NULL, $operand->__BEGIN, $operand->__END->__operator_add(NULL, $this->F_size(NULL)));
 			}
 		}
 		else if(get_class($operand) === 'F_String' || is_subclass_of($operand, 'F_String'))
@@ -2176,6 +2207,10 @@ class F_String extends F_Object
 	public function F_include_QUES_($block,$operand)
 	{
 		return F_TrueClass::__from_bool(strpos($this->__STRING, $operand->F_to_s(NULL)->__STRING) !== FALSE);
+	}
+	public function F_size($block)
+	{
+		return F_Number::__from_number(strlen($this->__STRING));
 	}
 	public function F_length($block)
 	{
