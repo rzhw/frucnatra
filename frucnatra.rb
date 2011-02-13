@@ -15,11 +15,11 @@ require 'phpcall'
     route 'GET', path, &block
   end
 
-  def put(path, &bk)     route 'PUT',     path, opts, &bk end
-  def post(path, &bk)    route 'POST',    path, opts, &bk end
-  def delete(path, &bk)  route 'DELETE',  path, opts, &bk end
-  def head(path, &bk)    route 'HEAD',    path, opts, &bk end
-  def options(path, &bk) route 'OPTIONS', path, opts, &bk end
+  def put(path, &bk)     route 'PUT',     path, &bk end
+  def post(path, &bk)    route 'POST',    path, &bk end
+  def delete(path, &bk)  route 'DELETE',  path, &bk end
+  def head(path, &bk)    route 'HEAD',    path, &bk end
+  def options(path, &bk) route 'OPTIONS', path, &bk end
 
   def route(verb, path, &block)  
     #pattern = path
