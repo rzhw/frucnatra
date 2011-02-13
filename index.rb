@@ -1,5 +1,4 @@
 require 'frucnatra'
-require 'http'
 
 get '/' do
   "<h1>Fructose Demo</h1>
@@ -29,6 +28,11 @@ get '/test' do
 end
 
 get '/name/:name' do
-  puts "<p>Params: #{params}</p>"
-  "You said your name was #{params[:name]}"
+  "<p>Params: #{params}</p>
+  <p>You said your name was #{params[:name]}"
+end
+
+get '/name/:first/:last' do
+  "<p>Params: #{params}</p>
+  <p>You said your name was #{params[:first]} #{params[:last]}"
 end
