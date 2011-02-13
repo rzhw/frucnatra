@@ -46,7 +46,7 @@ require 'phpcall'
     #conditions, @conditions = @conditions, []
     conditions = []
     #remove_method method_name
-
+    
     #[ block.arity != 0 ?
     #    proc { unbound_method.bind(self).call(*@block_params) } :
     #    proc { unbound_method.bind(self).call },
@@ -91,7 +91,31 @@ require 'phpcall'
       routes.each do |arr| # Splatting to block params not supported yet
         pattern, keys, conditions, block = arr
 
-        if match = pattern.match(path_info) #pattern == path_info
+        if match = pattern.match(path_info)
+          values = match.captures.to_a
+          params =
+            if keys.any?
+              keys.zip(values).inject({}) do |hash,a| # |hash,(k,v)|
+                k,v = a
+                if k == 'splat'
+                  (hash[k] ||= []) << v
+                else
+                  hash[k] = v
+                end
+                hash
+              end
+            elsif values.any?
+              {'captures' => values}
+            else
+              {}
+            end
+          params = $request.merge(params)
+        
+          # Workaround for NodeType SelfReference not supported yet (in the compile! method)
+          define_global_method :params do
+            params
+          end
+          
           puts block.call
           return
         end
