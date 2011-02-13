@@ -109,7 +109,11 @@ require 'phpcall'
             else
               {}
             end
-          params = $request.merge(params)
+          
+          # Untaint the params before insertion - Sinatra doesn't have tainting
+          $request.each do |k,v|
+            params = params.merge({ k => v.untaint })
+          end
         
           # Workaround for NodeType SelfReference not supported yet (in the compile! method)
           define_global_method :params do
