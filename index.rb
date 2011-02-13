@@ -1,5 +1,5 @@
-require 'http'
 require 'frucnatra'
+require 'http'
 
 get '/' do
   "<h1>Fructose Demo</h1>
@@ -17,7 +17,6 @@ get '/' do
 end
 
 post '/name/submit' do
-  # No .escape will cause an error
   "<h1>Fructose Demo</h1>
   <p>You said your name was #{params[:name]}</p>
   <p><a href='#{root}'>Go home</a></p>"
@@ -30,5 +29,6 @@ get '/test' do
 end
 
 get '/name/:name' do
+  puts "<p>Params: #{params}</p>"
   "You said your name was #{params[:name]}"
 end
