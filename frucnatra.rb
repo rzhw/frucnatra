@@ -120,6 +120,11 @@ require 'phpcall'
             params
           end
           
+          # Frucnatra isn't a DSL, so this is needed
+          define_global_method :root do
+            $root
+          end
+          
           puts block.call
           return
         end
