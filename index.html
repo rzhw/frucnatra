@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Frucnatra</title>
+    
+    <style type="text/css">
+    body {
+        margin: 40px 150px;
+        background: #fff url(legend.gif) no-repeat fixed right 130px;
+        font-family: georgia, "bitstream vera serif", serif;
+        color: #000;
+    }
+    h1, h2 {
+        font-weight: normal;
+    }
+    h1 {
+        margin: 0;
+        color: #8CCF49;
+        text-shadow: 1px 1px 1px #589977;
+        font-size: 100px;
+        letter-spacing: -6px;
+    }
+    h2 {
+        font-size: 40px;
+    }
+    code, pre, tt {
+        color: #666666;
+        font-size: 30px;
+        font-family: "lucida console","monaco","andale mono","bitstream vera sans mono","consolas",monospace;
+    }
+    a {
+        color: #444;
+        text-decoration: none;
+    }
+    a:hover {
+        text-decoration: underline;
+    }
+    footer {
+        margin-top: 60px;
+        font-size: 12px;
+    }
+    </style>
+</head>
+
+<body>
+    <h1>Frucnatra</h1>
+    
+    <h2>Put this in your <del>pipe</del> cinnamon</h2>
+    
+    <pre><code>require 'frucnatra'
+get '/hi' do
+  "Hello World!"
+end</code></pre>
+
+    <h2>And <del>smoke it</del> put it in an apple pie or something</h2>
+    
+    <pre><code>Options +FollowSymlinks
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !index\.php
+RewriteRule ^(.*)$ index.php/$1 [NC]</code></pre>
+
+    <footer>
+        This website is totally not a rip-off of <a href="http://www.sinatrarb.com/">Sinatra's</a>. (Sorry if I hurt anyone's feelings.)
+    </footer>
+    
+    <a href="http://github.com/a2h/frucnatra">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub" />
+    </a>
+</body>
+
+</html>
