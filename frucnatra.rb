@@ -84,6 +84,20 @@ require 'phpcall'
     end
   end
   
+  $frucnatra_dir = phpcall :realpath, '.' # Workaround since the working dir is incorrect in blocks
+  $frucnatra_render = { :layout => false, :template => '' }
+  
+  def render(template)
+    $frucnatra_render[:layout] = true if File.exist? $frucnatra_dir + '/views/layout.php'
+    $frucnatra_render[:template] = template
+  end
+  
+  def views_workaround(file)
+    if ($frucnatra_render[:layout] && file == 'layout') || (File.exist? $frucnatra_dir + "/views/#{file}.php")
+      _php_include "views/#{file}.php"
+    end
+  end
+  
   def frucnatra_shutdown
     path_info = $server[:PATH_INFO] || '/'
     method = $server[:REQUEST_METHOD]
@@ -121,7 +135,20 @@ require 'phpcall'
             params
           end
           
-          puts block.call
+          result = block.call
+          
+          if $frucnatra_render[:layout]
+            views_workaround 'layout' do
+              phpcall :ob_start
+              views_workaround $frucnatra_render[:template]
+              buffer = phpcall :ob_get_contents
+              phpcall :ob_end_clean
+              buffer
+            end
+          else
+            puts result
+          end
+          
           return
         end
       end

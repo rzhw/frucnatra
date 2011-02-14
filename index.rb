@@ -1,10 +1,8 @@
 require 'frucnatra'
 
-@home = "<p><a href='#{root}'>Go home</a></p>"
-
 get '/' do
-  "<h1>Fructose Demo</h1>  
-  <h2>Basic</h2>
+  render 'aaa'
+  "<h2>Basic</h2>
   <ul>
     <li><a href='#{root}/test'>Test page</a></li>
     <li><a href='#{root}/lskdjfklsjdf'>Non-existent page</a></li>
@@ -40,21 +38,17 @@ get '/' do
 end
 
 get '/test' do
-  "<h1>Fructose Demo</h1>
-  <p>This is a test page!</p>" + @home
+  "This is a test page!"
 end
 
 post '/name/submit' do
-  "<h1>Fructose Demo</h1>
-  <p>You said your name was #{params[:name]}</p>" + @home
+  "You said your name was #{params[:name]}"
 end
 
 get '/name/param/:name' do
-  "<h1>Fructose Demo</h1>
-  <p>You said your name was #{params[:name]}" + @home
+  "You said your name was #{params[:name]}"
 end
 
 get '/name/param/:first/:last' do
-  "<h1>Fructose Demo</h1>
-  <p>You said your name was #{params[:first]} #{params[:last]}" + @home
+  "You said your name was #{params[:first]} #{params[:last]}"
 end
