@@ -28,11 +28,9 @@ get '/test' do
 end
 
 get '/name/:name' do
-  "<p>Params: #{params}</p>
-  <p>You said your name was #{params[:name]}"
+  "<p>You said your name was #{params[:name]}"
 end
 
 get '/name/:first/:last' do
-  "<p>Params: #{params}</p>
-  <p>You said your name was #{params[:first]} #{params[:last]}"
+  "<p>You said your name was #{params[:first]} #{params[:last]}"
 end

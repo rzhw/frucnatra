@@ -68,7 +68,6 @@ require 'phpcall'
           when special_chars #when *special_chars
             Regexp.escape(match)
           else
-            puts "<p>match = #{match} | $2 = #{$2} | $2[1..-1] = #{$2[1..-1]}"
             keys << $2[1..-1]
             "([^/?#]+)"
           end
@@ -93,7 +92,6 @@ require 'phpcall'
 
         if match = pattern.match(path_info)
           values = match.captures.to_a
-          puts "<p>pattern = #{pattern} | keys = #{keys} | values = #{values} | keys.zip(values) = #{keys.zip(values)}</p>"
           params =
             if keys.any?
               keys.zip(values).reduce({}) do |hash,a| #keys.zip(values).inject({}) do |hash,(k,v)|
@@ -101,7 +99,6 @@ require 'phpcall'
                 if k == 'splat'
                   (hash[k.to_sym] ||= []) << v
                 else
-                  puts "<p>Creating hash with key #{k} and value #{v}</p>"
                   hash[k.to_sym] = v
                 end
                 hash
