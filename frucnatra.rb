@@ -7,8 +7,10 @@ require 'phpcall'
   end
           
   # Frucnatra isn't a DSL, so this is needed
+  request_uri_decoded = phpcall :urldecode, $server[:REQUEST_URI]
+  $root = request_uri_decoded[0, request_uri_decoded.length - ($server[:PATH_INFO].nil? ? 0 : $server[:PATH_INFO].length)]
   define_global_method :root do
-    $server[:REQUEST_URI][0, $server[:REQUEST_URI].length - ($server[:PATH_INFO].nil? ? 0 : $server[:PATH_INFO].length)]
+    $root
   end
 
   def get(path, &block)
