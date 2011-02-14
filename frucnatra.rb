@@ -5,11 +5,11 @@ require 'phpcall'
   $routes = Hash.new do |h,k|
     h[k] = []
   end
-
-  #$routes = []
-
-  # In Sinatra this may be :root in the Base class, not sure
-  $root = $server[:REQUEST_URI][0, $server[:REQUEST_URI].length - ($server[:PATH_INFO].nil? ? 0 : $server[:PATH_INFO].length)]
+          
+  # Frucnatra isn't a DSL, so this is needed
+  define_global_method :root do
+    $server[:REQUEST_URI][0, $server[:REQUEST_URI].length - ($server[:PATH_INFO].nil? ? 0 : $server[:PATH_INFO].length)]
+  end
 
   def get(path, &block)
     route 'GET', path, &block
@@ -117,11 +117,6 @@ require 'phpcall'
           # Workaround for NodeType SelfReference not supported yet (in the compile! method)
           define_global_method :params do
             params
-          end
-          
-          # Frucnatra isn't a DSL, so this is needed
-          define_global_method :root do
-            $root
           end
           
           puts block.call
