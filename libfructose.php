@@ -357,6 +357,17 @@ class F_File extends F_Enumerable
 		if(!$file->__CLOSED)
 			$file->F_close(NULL);
 	}
+	public static function SF_absolute_path($block, $filename)
+	{
+		$p = realpath($filename->F_to_s(NULL)->__STRING);
+		if($p === FALSE || $p === NULL)
+			return new F_NilClass;
+		return F_String::__from_string($p);
+	}
+	public static function SF_exist_QUES_($block, $filename)
+	{
+		return F_TrueClass::__from_bool(file_exists($filename->F_to_s(NULL)->__STRING));
+	}
 	public function F_close($block)
 	{
 		if($this->__CLOSED)
@@ -863,13 +874,12 @@ class F_Enumerable extends F_Object
 		
 		if($block === NULL && $sym !== NULL)
 			$block = create_function('',sprintf('$a = func_get_args(); return call_user_func(array($a[1],"%s"), NULL, $a[2]);', _rmethod_to_php($sym->__SYMBOL)));
-			
-		if($block === NULL)
+		elseif($block === NULL)
 		{
 			// @TODO
 			// throw some exception
 		}
-		if($sym !== NULL)
+		elseif($sym !== NULL)
 			F_Enumerable::$_states[$state] = $sym;
 			
 		$this->F_each(create_function('',sprintf('$a = func_get_args(); $state = %d; $f = "%s";
@@ -2098,6 +2108,15 @@ class F_String extends F_Object
 		$this->__string[(int)$operand->__NUMBER] = $val->__STRING;
 		return $val;
 	}
+	public function F_concat($block, $str)
+	{
+		return $this->__operator_lshift(NULL, $str);
+	}
+	public function F_force_encoding($block, $enc)
+	{
+		// nop method to keep ERB happy
+		return new F_NilClass;
+	}
 	public function F_escape($block)
 	{
 		$str = F_String::__from_string(htmlspecialchars($this->__STRING));
@@ -2242,6 +2261,14 @@ class F_String extends F_Object
 	public function F_upcase($block)
 	{
 		return F_String::__from_string(strtoupper($this->__STRING), $this->_tainted);
+	}
+	public function F_url_encode($block)
+	{
+		return F_String::__from_string(urlencode($this->__STRING));
+	}
+	public function F_url_decode($block)
+	{
+		return F_String::__from_string(urldecode($this->__STRING));
 	}
 	public function F_upcase_EXCL_($block)
 	{
