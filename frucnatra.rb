@@ -104,6 +104,8 @@ require 'phpcall'
   $frucnatra_dir = phpcall :realpath, '.' # Workaround since the working dir is incorrect in blocks
   $frucnatra_render = { :layout => false, :template => '' }
   
+  def erb(template) render template end
+  
   def render(template)
     $frucnatra_render[:layout] = true if File.exist? "#{$frucnatra_dir}/views/layout.php"
     $frucnatra_render[:template] = template
