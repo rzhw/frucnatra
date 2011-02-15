@@ -27,7 +27,7 @@ require 'phpcall'
   end
   
   def halt
-    phpcall :exit
+    `exit();`
   end
 
   def get(path, &block)
