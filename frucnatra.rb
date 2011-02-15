@@ -7,6 +7,12 @@ require 'phpcall'
     def status(value)
       phpcall :header, "Status: HTTP/1.1 #{$frucnatra_statustext[value]}"
     end
+    
+    def redirect(uri)
+      status 302
+      phpcall :header, "Location: #{uri}"
+      halt
+    end
   #end
   
   $routes = Hash.new do |h,k|
@@ -18,6 +24,10 @@ require 'phpcall'
   $root = request_uri_decoded[0, request_uri_decoded.length - ($server[:PATH_INFO].nil? ? 0 : $server[:PATH_INFO].length)]
   define_global_method :root do
     $root
+  end
+  
+  def halt
+    phpcall :exit
   end
 
   def get(path, &block)

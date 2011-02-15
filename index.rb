@@ -19,3 +19,11 @@ end
 get '/name/:first/:last' do
   "You said your name was #{params[:first]} #{params[:last]}"
 end
+
+get '/redirect' do
+  redirect "#{root}/redirected"
+end
+
+get '/redirected' do
+  "You just got redirected!"
+end
