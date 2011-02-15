@@ -21,7 +21,7 @@ get '/name/:first/:last' do
 end
 
 get '/redirect' do
-  redirect "#{root}/redirected"
+  redirect "#{url_root}/redirected"
 end
 
 get '/redirected' do

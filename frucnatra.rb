@@ -21,9 +21,9 @@ require 'phpcall'
           
   # Frucnatra isn't a DSL, so this is needed
   request_uri_decoded = phpcall :urldecode, $server[:REQUEST_URI]
-  $root = request_uri_decoded[0, request_uri_decoded.length - ($server[:PATH_INFO].nil? ? 0 : $server[:PATH_INFO].length)]
-  define_global_method :root do
-    $root
+  $frucnatra_root = request_uri_decoded[0, request_uri_decoded.length - ($server[:PATH_INFO].nil? ? 0 : $server[:PATH_INFO].length)]
+  define_global_method :url_root do
+    $frucnatra_root
   end
   
   def halt
