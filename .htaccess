@@ -1,0 +1,5 @@
+Options +FollowSymlinks
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !index\.php
+RewriteCond %{REQUEST_URI} !public/
+RewriteRule ^(.*)$ index.php/$1 [NC]

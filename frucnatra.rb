@@ -135,6 +135,15 @@ require 'phpcall'
     path_info = $server[:PATH_INFO] || '/'
     method = $server[:REQUEST_METHOD]
     
+    # Public files take precendence
+    if path_info != '/'
+      pub_test = phpcall :realpath, "#{$frucnatra_dir}/public#{path_info}"
+      if pub_test.is_a? :String and pub_test.gsub("#{$frucnatra_dir}", '')[1,6] == 'public'
+        redirect "#{$root}/public#{path_info}"
+        return
+      end
+    end
+    
     if routes = $routes[method]
       routes.each do |arr| # Splatting to block params not supported yet
         pattern, keys, conditions, block = arr
