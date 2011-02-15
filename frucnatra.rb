@@ -119,7 +119,6 @@ require 'phpcall'
   
   def enable(opt) #(*opts)
     if opt == :sessions
-      create_session
       $frucnatra_session = true
     end
   end
@@ -127,7 +126,6 @@ require 'phpcall'
   def disable(opt) #(*opts)
     if opt == :sessions
       if $frucnatra_session
-        destroy_session
         $frucnatra_session = false
       end
     end
@@ -170,6 +168,13 @@ require 'phpcall'
             params
           end
           
+          # Session var
+          if $frucnatra_session
+            define_global_method :session do
+              $session
+            end
+          end
+          
           result = block.call
           
           if $frucnatra_render[:layout]
@@ -182,12 +187,6 @@ require 'phpcall'
             end
           else
             puts result
-          end
-          
-          if $frucnatra_session
-            $session.each do |k,v|
-              set_session_var k,v
-            end
           end
           
           return
