@@ -105,12 +105,12 @@ require 'phpcall'
   $frucnatra_render = { :layout => false, :template => '' }
   
   def render(template)
-    $frucnatra_render[:layout] = true if File.exist? $frucnatra_dir + '/views/layout.php'
+    $frucnatra_render[:layout] = true if File.exist? "#{$frucnatra_dir}/views/layout.php"
     $frucnatra_render[:template] = template
   end
   
   def views_workaround(file)
-    if ($frucnatra_render[:layout] && file == 'layout') || (File.exist? $frucnatra_dir + "/views/#{file}.php")
+    if ($frucnatra_render[:layout] and file == 'layout') or File.exist? "#{$frucnatra_dir}/views/#{file}.php"
       _php_include "views/#{file}.php"
     end
   end
