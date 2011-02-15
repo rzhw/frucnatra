@@ -115,6 +115,24 @@ require 'phpcall'
     end
   end
   
+  $frucnatra_session = false
+  
+  def enable(opt) #(*opts)
+    if opt == :sessions
+      create_session
+      $frucnatra_session = true
+    end
+  end
+  
+  def disable(opt) #(*opts)
+    if opt == :sessions
+      if $frucnatra_session
+        destroy_session
+        $frucnatra_session = false
+      end
+    end
+  end
+  
   def frucnatra_shutdown
     path_info = $server[:PATH_INFO] || '/'
     method = $server[:REQUEST_METHOD]
@@ -166,6 +184,12 @@ require 'phpcall'
             puts result
           end
           
+          if $frucnatra_session
+            $session.each do |k,v|
+              set_session_var k,v
+            end
+          end
+          
           return
         end
       end
@@ -192,7 +216,7 @@ require 'phpcall'
       </html>
     HTML
   end
-
+  
   phpcall :register_shutdown_function, 'F_frucnatra_shutdown', nil
   
   $frucnatra_statustext = {
