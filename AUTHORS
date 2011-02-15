@@ -1,0 +1,15 @@
+Well, I have to definitely give huge thanks to every single one of the
+[contributors to Sinatra](https://github.com/sinatra/sinatra/blob/master/AUTHORS)
+for creating such an *awesome* framework, whose code I have partly ripped to
+help develop this :P
+
+A shout out also to:
+
+* Maximilian Schoening (mschoening) for getting me to actually try using Ruby,
+  and for introducing me to Sinatra... 'nuff said.
+* Charlie Somerville (charliesome), creator of Fructose, which of course Frucnatra
+  depends on, and for adding so many features I requested in the first few days of
+  Frucnatra's inception. That workflow was crazy productive!
+* Kris Jordan (KrisJordan) for that really nice list of HTTP statuses.
+
+- Richard
