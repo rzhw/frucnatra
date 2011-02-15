@@ -32,26 +32,38 @@ function set_sgs($arr)
 	}
 }
 
-function F_create_session($block)
+class F_HttpSession extends F_Object
 {
-	if (session_id() == '')
+	public function __operator_arrayget($block, $key)
 	{
 		session_start();
+		$k = $key->F_to_s(NULL)->__STRING;
+		if(!isset($_SESSION[$k]))
+			return new F_NilClass;
+		return $_SESSION[$k];
 	}
-	
-	set_sgs(array("session" => $_SESSION));
-}
-
-function F_destroy_session($block)
-{
-	if (session_id() != '')
+	public function __operator_arrayset($block, $key, $val)
 	{
-		session_unset();
+		session_start();
+		$_SESSION[$key->F_to_s(NULL)->__STRING] = $val;
+		return $val;
+	}
+	public function F_id($block)
+	{
+		if(session_id() === '')
+			return new F_NilClass;
+		return F_String::__from_string(session_id());
+	}
+	public function F_id__set($block, $val)
+	{
+		session_id($val->F_to_s(NULL)->__STRING);
+		return $val;
+	}
+	public function F_destroy_EXCL_($block)
+	{
 		session_destroy();
+		return new F_NilClass;
 	}
 }
 
-function F_set_session_var($block, $k, $v)
-{
-	$_SESSION[$k->toPHP()] = $v->toPHP();
-}
+$GLOBALS['_globals']['F_session'] = new F_HttpSession;
