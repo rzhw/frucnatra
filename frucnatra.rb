@@ -141,7 +141,7 @@ require 'phpcall'
     if path_info != '/'
       pub_test = phpcall :realpath, "#{$frucnatra_dir}/public#{path_info}"
       if pub_test.is_a? :String and pub_test.gsub("#{$frucnatra_dir}", '')[1,6] == 'public'
-        redirect "#{$root}/public#{path_info}"
+        redirect "#{$frucnatra_root}/public#{path_info}"
         return
       end
     end
