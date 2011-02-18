@@ -15,7 +15,7 @@ require 'phpcall'
     end
   #end
   
-  $routes = Hash.new do |h,k|
+  $frucnatra_routes = Hash.new do |h,k|
     h[k] = []
   end
           
@@ -54,7 +54,7 @@ require 'phpcall'
     #($routes[verb] ||= []).
     #  push([pattern, keys, conditions, block]).last
     
-    $routes[verb][$routes[verb].count] = [pattern, keys, conditions, Proc.new(&block)] # Using Proc.new as a temp Fructose-related thing
+    $frucnatra_routes[verb][$frucnatra_routes[verb].count] = [pattern, keys, conditions, Proc.new(&block)] # Using Proc.new as a temp Fructose-related thing
   end
   
   def compile!(verb, path, block, options) # options={}
@@ -149,7 +149,7 @@ require 'phpcall'
       end
     end
     
-    if routes = $routes[method]
+    if routes = $frucnatra_routes[method]
       routes.each do |arr| # Splatting to block params not supported yet
         pattern, keys, conditions, block = arr
 
