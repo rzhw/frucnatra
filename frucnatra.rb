@@ -19,9 +19,12 @@ require 'phpcall'
     h[k] = []
   end
           
+  # Path info isn't guaranteed to be set
+  $frucnatra_path_info = $server[:PATH_INFO] || '/'
+          
   # Frucnatra isn't a DSL, so this is needed
   request_uri_decoded = phpcall :urldecode, $server[:REQUEST_URI]
-  $frucnatra_root = request_uri_decoded[0, request_uri_decoded.length - ($server[:PATH_INFO].nil? ? 0 : $server[:PATH_INFO].length)]
+  $frucnatra_root = request_uri_decoded[0, request_uri_decoded.length - $frucnatra_path_info.length]
   define_global_method :url_root do
     $frucnatra_root
   end
@@ -134,7 +137,7 @@ require 'phpcall'
   end
   
   def frucnatra_shutdown
-    path_info = $server[:PATH_INFO] || '/'
+    path_info = $frucnatra_path_info
     method = $server[:REQUEST_METHOD]
     
     # Public files take precendence
