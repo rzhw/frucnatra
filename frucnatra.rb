@@ -18,10 +18,10 @@ require 'phpcall'
   $frucnatra_routes = Hash.new do |h,k|
     h[k] = []
   end
-          
-  # Path info isn't guaranteed to be set
-  $frucnatra_path_info = $server[:PATH_INFO] || '/'
-          
+  
+  # PATH_INFO isn't guaranteed to be set. Also, on some servers, it may be ORIG_PATH_INFO instead.
+  $frucnatra_path_info = $server[:PATH_INFO] || $server[:ORIG_PATH_INFO] || '/'
+  
   # Frucnatra isn't a DSL, so this is needed
   request_uri_decoded = phpcall :urldecode, $server[:REQUEST_URI]
   $frucnatra_root = request_uri_decoded[0, request_uri_decoded.length - $frucnatra_path_info.length]
