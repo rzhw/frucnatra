@@ -5,7 +5,7 @@ require 'phpcall'
   # Methods available to routes, before/after filters, and views.
   #module Helpers
     def status(value)
-      phpcall :header, "Status: HTTP/1.1 #{$frucnatra_statustext[value]}"
+      phpcall :header, "HTTP/1.1 #{$frucnatra_statustext[value]}"
     end
     
     def redirect(uri)
