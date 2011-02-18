@@ -20,7 +20,7 @@ require 'phpcall'
   end
   
   # PATH_INFO isn't guaranteed to be set. Also, on some servers, it may be ORIG_PATH_INFO instead.
-  $frucnatra_path_info = $server[:PATH_INFO] || $server[:ORIG_PATH_INFO] || '/'
+  $frucnatra_path_info = $server[:PATH_INFO].untaint || $server[:ORIG_PATH_INFO].untaint || '/'
   
   # Frucnatra isn't a DSL, so this is needed
   request_uri_decoded = phpcall :urldecode, $server[:REQUEST_URI]
