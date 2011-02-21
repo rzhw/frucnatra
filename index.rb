@@ -1,4 +1,10 @@
-require 'frucnatra'
+$using_frucnatra = true # Change this to run on Sinatra
+if !$using_frucnatra
+  require 'rubygems'
+  require 'sinatra'
+else
+  require 'frucnatra'
+end
 
 get '/' do
   render 'home'
