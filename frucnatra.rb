@@ -1,6 +1,9 @@
 require 'http'
 require 'phpcall'
 
+class Frucnatra
+end
+
 #module Frucnatra
   # Methods available to routes, before/after filters, and views.
   #module Helpers
