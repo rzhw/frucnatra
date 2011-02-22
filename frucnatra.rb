@@ -4,6 +4,17 @@ require 'phpcall'
 class Frucnatra
 end
 
+class FrucnatraRequest
+  def path_info
+    # PATH_INFO isn't guaranteed to be set. Also, on some servers, it may be ORIG_PATH_INFO instead.
+    $server[:PATH_INFO].untaint || $server[:ORIG_PATH_INFO].untaint || '/'
+  end
+end
+$frucnatra_request = FrucnatraRequest.new
+define_global_method :request do
+  $frucnatra_request
+end
+
 #module Frucnatra
   # Methods available to routes, before/after filters, and views.
   #module Helpers
@@ -22,12 +33,9 @@ end
     h[k] = []
   end
   
-  # PATH_INFO isn't guaranteed to be set. Also, on some servers, it may be ORIG_PATH_INFO instead.
-  $frucnatra_path_info = $server[:PATH_INFO].untaint || $server[:ORIG_PATH_INFO].untaint || '/'
-  
   # Frucnatra isn't a DSL, so this is needed
   request_uri_decoded = phpcall :urldecode, $server[:REQUEST_URI]
-  $frucnatra_root = request_uri_decoded[0, request_uri_decoded.length - $frucnatra_path_info.length]
+  $frucnatra_root = request_uri_decoded[0, request_uri_decoded.length - request.path_info.length]
   define_global_method :url_root do
     $frucnatra_root
   end
@@ -154,7 +162,7 @@ end
   end
   
   def frucnatra_shutdown
-    path_info = $frucnatra_path_info
+    path_info = request.path_info
     method = $server[:REQUEST_METHOD]
     
     # Public files take precendence

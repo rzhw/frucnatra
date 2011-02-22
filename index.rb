@@ -34,3 +34,7 @@ end
 get '/redirected' do
   "You just got redirected!"
 end
+
+get '/request' do
+  request.path_info
+end
