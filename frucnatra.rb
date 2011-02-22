@@ -108,6 +108,7 @@ end
   end
   
   $frucnatra_dir = phpcall :realpath, '.' # Workaround since the working dir is incorrect in blocks
+  $frucnatra_already_rendered_layout = false # I'm not sure if Sinatra does this as well
   
   def erb(template) render template end
   
@@ -120,8 +121,9 @@ end
       buffer
     }
     
-    if File.exist? "#{$frucnatra_dir}/views/layout.php"
+    if File.exist? "#{$frucnatra_dir}/views/layout.php" and not $frucnatra_already_rendered_layout
       views_workaround :layout do
+        $frucnatra_already_rendered_layout = true
         f.call template
       end
     else
@@ -130,7 +132,7 @@ end
   end
   
   def views_workaround(file)
-    if (file.is_a? :Symbol and file == :layout) or File.exist? "#{$frucnatra_dir}/views/#{file}.php"
+    if File.exist? "#{$frucnatra_dir}/views/#{file}.php"
       _php_include "views/#{file}.php"
     end
   end
