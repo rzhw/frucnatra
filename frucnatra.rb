@@ -108,17 +108,29 @@ end
   end
   
   $frucnatra_dir = phpcall :realpath, '.' # Workaround since the working dir is incorrect in blocks
-  $frucnatra_render = { :layout => false, :template => '' }
   
   def erb(template) render template end
   
   def render(template)
-    $frucnatra_render[:layout] = true if File.exist? "#{$frucnatra_dir}/views/layout.php"
-    $frucnatra_render[:template] = template
+    f = Proc.new {|template|
+      phpcall :ob_start
+      views_workaround template
+      buffer = phpcall :ob_get_contents
+      phpcall :ob_end_clean
+      buffer
+    }
+    
+    if File.exist? "#{$frucnatra_dir}/views/layout.php"
+      views_workaround :layout do
+        f.call template
+      end
+    else
+      f.call template
+    end
   end
   
   def views_workaround(file)
-    if ($frucnatra_render[:layout] and file == 'layout') or File.exist? "#{$frucnatra_dir}/views/#{file}.php"
+    if (file.is_a? :Symbol and file == :layout) or File.exist? "#{$frucnatra_dir}/views/#{file}.php"
       _php_include "views/#{file}.php"
     end
   end
@@ -192,19 +204,7 @@ end
             end
           end
           
-          result = block.call
-          
-          if $frucnatra_render[:layout]
-            views_workaround 'layout' do
-              phpcall :ob_start
-              views_workaround $frucnatra_render[:template]
-              buffer = phpcall :ob_get_contents
-              phpcall :ob_end_clean
-              buffer
-            end
-          else
-            puts result
-          end
+          puts block.call
           
           return
         end
