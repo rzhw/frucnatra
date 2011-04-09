@@ -159,6 +159,17 @@ end
     opts.each { |key| set(key, false) }
   end
   
+  # Params
+  $frucnatra_params = {}
+  $request.each do |k,v|
+    $frucnatra_params = $frucnatra_params.merge({ k => v.untaint })
+  end
+
+  # Workaround for NodeType SelfReference not supported yet (in the compile! method)
+  define_global_method :params do
+    $frucnatra_params
+  end
+  
   def frucnatra_shutdown
     path_info = request.path_info
     method = $server[:REQUEST_METHOD]
@@ -178,7 +189,7 @@ end
 
         if match = pattern.match(path_info)
           values = match.captures.to_a
-          params =
+          params2 =
             if keys.any?
               keys.zip(values).reduce({}) do |hash,a| #keys.zip(values).inject({}) do |hash,(k,v)|
                 k,v = a
@@ -195,20 +206,13 @@ end
               {}
             end
           
-          # Untaint the params before insertion - Sinatra doesn't have tainting
-          $request.each do |k,v|
-            params = params.merge({ k => v.untaint })
-          end
-        
-          # Workaround for NodeType SelfReference not supported yet (in the compile! method)
-          define_global_method :params do
-            params
-          end
+          # Params
+          $frucnatra_params = $frucnatra_params.merge params2
           
           # Session var
           if $frucnatra_session
             define_global_method :session do
-              $session
+              $session if $frucnatra_session
             end
           end
           
