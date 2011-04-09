@@ -44,22 +44,17 @@ end
     `exit();`
   end
 
-  def get(path, &block)
-    route 'GET', path, &block
+  def get(path, opts={}, &block)
+    route 'GET', path, opts, &block
   end
 
-  def put(path, &bk)     route 'PUT',     path, &bk end
-  def post(path, &bk)    route 'POST',    path, &bk end
-  def delete(path, &bk)  route 'DELETE',  path, &bk end
-  def head(path, &bk)    route 'HEAD',    path, &bk end
-  def options(path, &bk) route 'OPTIONS', path, &bk end
+  def put(path, opts={}, &bk)     route 'PUT',     path, opts, &bk end
+  def post(path, opts={}, &bk)    route 'POST',    path, opts, &bk end
+  def delete(path, opts={}, &bk)  route 'DELETE',  path, opts, &bk end
+  def head(path, opts={}, &bk)    route 'HEAD',    path, opts, &bk end
+  def options(path, opts={}, &bk) route 'OPTIONS', path, opts, &bk end
 
-  def route(verb, path, &block)  
-    #pattern = path
-    #keys = nil
-    #conditions = nil
-    
-    options = {}
+  def route(verb, path, options={}, &block)
     dummy_block, pattern, keys, conditions = compile! verb, path, nil, options
     
     #($routes[verb] ||= []).
