@@ -147,18 +147,21 @@ end
   
   $frucnatra_session = false
   
-  def enable(opt) #(*opts)
-    if opt == :sessions
-      $frucnatra_session = true
+  def set(option, value)
+    case option
+      when :sessions
+        $frucnatra_session = value
     end
   end
-  
-  def disable(opt) #(*opts)
-    if opt == :sessions
-      if $frucnatra_session
-        $frucnatra_session = false
-      end
-    end
+
+  # Same as calling `set :option, true` for each of the given options.
+  def enable(*opts)
+    opts.each { |key| set(key, true) }
+  end
+
+  # Same as calling `set :option, false` for each of the given options.
+  def disable(*opts)
+    opts.each { |key| set(key, false) }
   end
   
   def frucnatra_shutdown
