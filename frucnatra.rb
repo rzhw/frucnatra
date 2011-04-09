@@ -68,7 +68,7 @@ end
     $frucnatra_routes[verb][$frucnatra_routes[verb].count] = [pattern, keys, conditions, Proc.new(&block)] # Using Proc.new as a temp Fructose-related thing
   end
   
-  def compile!(verb, path, block, options) # options={}
+  def compile!(verb, path, block, options={})
     #options.each_pair { |option, args| send(option, *args) }
     #method_name = "#{verb} #{path}"
 
