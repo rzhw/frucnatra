@@ -170,6 +170,12 @@ end
     $frucnatra_params
   end
   
+  # Session
+  define_global_method :session do
+    $session if $frucnatra_session
+    [] unless $frucnatra_session
+  end
+  
   def frucnatra_shutdown
     path_info = request.path_info
     method = $server[:REQUEST_METHOD]
@@ -208,13 +214,6 @@ end
           
           # Params
           $frucnatra_params = $frucnatra_params.merge params2
-          
-          # Session var
-          if $frucnatra_session
-            define_global_method :session do
-              $session if $frucnatra_session
-            end
-          end
           
           puts block.call
           
