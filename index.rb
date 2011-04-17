@@ -1,14 +1,19 @@
-$using_frucnatra = true # Change this to run on Sinatra
+$using_frucnatra = false # Change this to run on Sinatra
 
 if !$using_frucnatra
   require 'rubygems'
   require 'sinatra'
+  def url_root
+    ''
+  end
 else
   require 'frucnatra'
 end
 
+enable :sessions
+
 get '/' do
-  render 'home'
+  erb :home
 end
 
 get '/test' do
@@ -37,4 +42,17 @@ end
 
 get '/request' do
   request.path_info
+end
+
+post '/session/set' do
+  session[params[:sessionset_name]] = params[:sessionset_val]
+  "Set!"
+end
+
+post '/session/get' do
+  if not session[params[:sessionget_name]].nil?
+    "#{params[:sessionget_name]}: #{session[params[:sessionget_name]]}"
+  else
+    "#{params[:sessionget_name]}: <em>nil</em>"
+  end
 end
