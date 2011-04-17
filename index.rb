@@ -1,4 +1,4 @@
-$using_frucnatra = false # Change this to run on Sinatra
+$using_frucnatra = true # Change this to run on Sinatra
 
 if !$using_frucnatra
   require 'rubygems'
@@ -45,14 +45,14 @@ get '/request' do
 end
 
 post '/session/set' do
-  session[params[:sessionset_name]] = params[:sessionset_val]
+  session[params[:name]] = params[:val]
   "Set!"
 end
 
 post '/session/get' do
-  if not session[params[:sessionget_name]].nil?
-    "#{params[:sessionget_name]}: #{session[params[:sessionget_name]]}"
+  if not session[params[:name]].nil?
+    "#{params[:name]}: #{session[params[:name]]}"
   else
-    "#{params[:sessionget_name]}: <em>nil</em>"
+    "#{params[:name]}: <em>nil</em>"
   end
 end
