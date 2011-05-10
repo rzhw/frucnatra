@@ -117,11 +117,15 @@ end
   
   def render(template)
     f = Proc.new {|template|
-      phpcall :ob_start
-      views_workaround template
-      buffer = phpcall :ob_get_contents
-      phpcall :ob_end_clean
-      buffer
+      if not template.is_a? :String
+        phpcall :ob_start
+        views_workaround template
+        buffer = phpcall :ob_get_contents
+        phpcall :ob_end_clean
+        buffer
+      else
+        template
+      end
     }
     
     if File.exist? "#{$frucnatra_dir}/views/layout.php" and not $frucnatra_already_rendered_layout
